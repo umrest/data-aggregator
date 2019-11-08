@@ -17,7 +17,7 @@ class AggregatorServer(asyncore.dispatcher):
         self.bind(address)
         self.address = self.socket.getsockname()
         self.listen(1)
-        self.hero_serial = HeroSerial("COM9")
+        self.hero_serial = HeroSerial("/dev/serial/by-id/usb-Silicon_Labs_CP2102_USB_to_UART_Bridge_Controller_0001-if00-port0")
         return
 
     def handle_accept(self):

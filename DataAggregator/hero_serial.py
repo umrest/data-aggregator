@@ -26,6 +26,8 @@ class HeroSerial():
             print("Serial not connected")
             return False
         
+        print(len(b))
+        
         self.lock.acquire()
         self.ser.write(b)
         self.lock.release()
