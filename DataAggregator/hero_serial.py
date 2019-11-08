@@ -30,6 +30,7 @@ class HeroSerial():
         
         self.lock.acquire()
         self.ser.write(b)
+        self.ser.flush()
         self.lock.release()
         return True
     
