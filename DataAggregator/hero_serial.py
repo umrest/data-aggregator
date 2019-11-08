@@ -36,8 +36,11 @@ class HeroSerial():
             print("Serial not connected")
             return False
 
-        self.lock.acquire()
-        b = self.ser.read(128)
-        self.lock.release()
-        return True
+        if(self.ser.in_waiting == 128):
+            self.lock.acquire()
+            b = self.ser.read(128)
+            self.lock.release()
+            return True
+        
+        return False
 
