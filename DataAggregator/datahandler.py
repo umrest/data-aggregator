@@ -36,7 +36,7 @@ class DataHandler(asyncore.dispatcher_with_send):
             if (t == DASHBOARD):
                 print("Recieved Dashboard Data")
 
-
+                
                 # send to hero
                 self.serial.send(data)
             

@@ -4,7 +4,7 @@ import threading
 class HeroSerial():
     def __init__(self, port):
         self.port = port
-        self.baud = "9600"
+        self.baud = "115200"
         self.timeout = 1
 
         self.try_connect()
