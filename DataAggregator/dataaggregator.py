@@ -31,5 +31,5 @@ class AggregatorServer(asyncore.dispatcher):
 
 
 def run():
-    AggregatorServer(("0.0.0.0", 5000))
+    AggregatorServer(("0.0.0.0", 8091))
     asyncore.loop()
