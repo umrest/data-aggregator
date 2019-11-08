@@ -2,6 +2,8 @@ import asyncore
 import logging
 import socket
 
+from .hero_serial import HeroSerial
+
 from .datahandler import DataHandler
 
 class AggregatorServer(asyncore.dispatcher):
@@ -14,12 +16,13 @@ class AggregatorServer(asyncore.dispatcher):
         self.bind(address)
         self.address = self.socket.getsockname()
         self.listen(1)
+        self.hero_serial = HeroSerial("COM9")
         return
 
     def handle_accept(self):
         # Called when a client connects to our socket
         client_info = self.accept()
-        DataHandler(sock=client_info[0])
+        DataHandler(sock=client_info[0], serial=self.hero_serial)
         return
     
     def handle_close(self):

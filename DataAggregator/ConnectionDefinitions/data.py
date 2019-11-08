@@ -5,8 +5,8 @@ from .TYPES import *
 class JoystickData():
     def __init__(self, b=None):
         if b != None:
-            joystick_data = b[:48]
-            self.lj_x, self.lj_y, self.rj_x, self.rj_y, self.lt, self.rt = JOYSTICK_PACKET.unpack(joystick_data)
+            joystick_data = b[:50]
+            self.buttons_1, self.buttons_2, self.lj_x, self.lj_y, self.rj_x, self.rj_y, self.lt, self.rt = JOYSTICK_PACKET.unpack(joystick_data)
         else:
             self.lj_x, self.lj_y, self.rj_x, self.rj_y, self.lt, self.rt = (0,0,0,0,0,0)
 
@@ -18,14 +18,16 @@ class JoystickData():
     def __str__(self):
         return """
         Left Joystick:
-            X: {0:.2f} Y: {0:.2f}
+            X: {0:.2f} Y: {1:.2f}
         Right Joystick:
-            X: {0:.2f} Y: {0:.2f}
+            X: {2:.2f} Y: {3:.2f}
         Left Trigger:
-            {0:.2f}
+            {4:.2f}
         Right Trigger:
-            {0:.2f}
-        """.format(self.lj_x, self.lj_y, self.rj_x, self.rj_y, self.lt, self.rt)
+            {5:.2f}
+        Buttons:
+            {6} {7}
+        """.format(self.lj_x, self.lj_y, self.rj_x, self.rj_y, self.lt, self.rt, self.buttons_1, self.buttons_2)
 
 class VisionData():
     def __init__(self, b=None):
