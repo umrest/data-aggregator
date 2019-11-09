@@ -1,3 +1,3 @@
-from DataAggregator import dataaggregator
+from DataAggregator import dataaggregator2
 
-dataaggregator.run()
+dataaggregator2.run()
