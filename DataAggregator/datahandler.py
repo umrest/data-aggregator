@@ -30,5 +30,3 @@ class DataHandler(asyncore.dispatcher_with_send):
             if (t == DASHBOARD):
                 print("Recieved Dashboard Data")
                 self.serial.send(data)
-            
-
