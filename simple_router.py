@@ -13,6 +13,7 @@ class SimpleRouter():
         self.s = socket.socket()         # Create a socket object
 
         self.s.bind(("0.0.0.0", 8091))        # Bind to the port
+        self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.s.listen(5)                 # Now wait for client connection.
 
     def update_socket(self, i, socket):
@@ -22,6 +23,20 @@ class SimpleRouter():
             self.vision_socket = socket
         if i == 3:
             self.hero_socket = socket
+    
+    def send_to_hero(self, msg):
+        print("Recieved Data for Hero")
+        if self.hero_socket != None:
+            self.hero_socket.send(msg)
+        else:
+            print("Hero is not connected")
+    
+    def send_to_dashboard(self, msg):
+        print("Recieved Data for Dashboard")
+        if self.dashboard_socket != None:
+            self.dashboard_socket.send(msg)
+        else:
+            print("Dashboard is not connected")
 
     def on_new_client(self, clientsocket,addr):
         i = -1
@@ -39,11 +54,7 @@ class SimpleRouter():
                     i = msg[1]
                     self.update_socket(i, clientsocket)
                 elif t == 1 or t == 2 or t == 9:
-                    print("Recieved Data for Hero")
-                    if self.hero_socket != None:
-                        self.hero_socket.send(msg)
-                    else:
-                        print("Hero is not connected")
+                    self.send_to_hero(msg)
                 else:
                     print("Invalid type: ", t)
         finally:
