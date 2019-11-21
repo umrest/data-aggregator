@@ -4,6 +4,7 @@ import socket               # Import socket module
 import threading
 from ConnectionDefinitions.BitArray8 import BitArray8
 import time
+from ConnectionDefinitions import TYPES
 
 class SimpleRouter():
     def __init__(self):
@@ -52,14 +53,14 @@ class SimpleRouter():
                     break
                 t = msg[0]
                 # socket identification packet
-                if t == 250:
+                if t == TYPES.IDENTIFICATION:
                     print("Recieved Indetification Packet")
                     i = msg[1]
                     self.update_socket(i, clientsocket)
                 # Vision, Dashboard, or joystick data gets sent to hero
-                elif t == 1 or t == 2 or t == 9:
+                elif t == TYPES.VISION or t == TYPES.DASHBOARD or t == TYPES.JOYSTICK:
                     self.send_to_hero(msg)
-                    if t == 2:
+                    if t == TYPES.VISION:
                         self.send_to_dashboard(msg)
                 else:
                     print("Invalid type: ", t)
@@ -73,7 +74,7 @@ class SimpleRouter():
             status = BitArray8()
             status.SetBit(0, self.hero_socket != None)
             status.SetBit(1, self.vision_socket != None)
-            data[0] = 8
+            data[0] = TYPES.DATAAGGREGATOR
             data[1] = status.aByte[0]
             self.send_to_dashboard(data)
             time.sleep(1)
