@@ -2,6 +2,8 @@
 
 import socket               # Import socket module
 import threading
+from ConnectionDefinitions.BitArray8 import BitArray8
+import time
 
 class SimpleRouter():
     def __init__(self):
@@ -11,9 +13,10 @@ class SimpleRouter():
         self.vision_socket = None
 
         self.s = socket.socket()         # Create a socket object
-
+        
+        self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)    
         self.s.bind(("0.0.0.0", 8091))        # Bind to the port
-        self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        
         self.s.listen(5)                 # Now wait for client connection.
 
     def update_socket(self, i, socket):
@@ -53,15 +56,31 @@ class SimpleRouter():
                     print("Recieved Indetification Packet")
                     i = msg[1]
                     self.update_socket(i, clientsocket)
+                # Vision, Dashboard, or joystick data gets sent to hero
                 elif t == 1 or t == 2 or t == 9:
                     self.send_to_hero(msg)
+                    if t == 2:
+                        self.send_to_dashboard(msg)
                 else:
                     print("Invalid type: ", t)
         finally:
             clientsocket.close()
             self.update_socket(i, None)
+        
+    def send_dataaggregator_state(self):
+        while True:
+            data = bytearray(128)
+            status = BitArray8()
+            status.SetBit(0, self.hero_socket != None)
+            status.SetBit(1, self.vision_socket != None)
+            data[0] = 8
+            data[1] = status.aByte[0]
+            self.send_to_dashboard(data)
+            time.sleep(1)
     
     def run(self):
+        send_dataaggregator_state_thread = threading.Thread(target=self.send_dataaggregator_state)
+        send_dataaggregator_state_thread.start()
         while True:
             c, addr = self.s.accept()     # Establish connection with client.
             print("Got connection from ", addr)
