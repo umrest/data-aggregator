@@ -13,6 +13,10 @@ class SimpleRouter():
         self.hero_socket = None
         self.vision_socket = None
 
+        self.dashboard_socket_lock = threading.Lock()
+        self.vision_socket_lock = threading.Lock()
+        self.hero_socket_lock = threading.Lock()
+
         self.s = socket.socket()         # Create a socket object
         
         self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)    
@@ -29,16 +33,20 @@ class SimpleRouter():
             self.hero_socket = socket
     
     def send_to_hero(self, msg):
-        print("Recieved Data for Hero")
+        #print("Recieved Data for Hero")
         if self.hero_socket != None:
+            self.hero_socket_lock.acquire()
             self.hero_socket.send(msg)
+            self.hero_socket_lock.release()
         else:
             print("Hero is not connected")
     
     def send_to_dashboard(self, msg):
-        print("Recieved Data for Dashboard")
+        #print("Recieved Data for Dashboard")
         if self.dashboard_socket != None:
+            self.dashboard_socket_lock.acquire()
             self.dashboard_socket.send(msg)
+            self.dashboard_socket_lock.release()
         else:
             print("Dashboard is not connected")
 
@@ -59,8 +67,10 @@ class SimpleRouter():
                     self.update_socket(i, clientsocket)
                 # Vision, Dashboard, or joystick data gets sent to hero
                 elif t == TYPES.VISION or t == TYPES.DASHBOARD or t == TYPES.JOYSTICK:
+                    print("Recieved Type ", t)
                     self.send_to_hero(msg)
                     if t == TYPES.VISION:
+                        
                         self.send_to_dashboard(msg)
                 else:
                     print("Invalid type: ", t)
