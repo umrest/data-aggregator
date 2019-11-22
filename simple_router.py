@@ -62,8 +62,8 @@ class SimpleRouter():
                 t = msg[0]
                 # socket identification packet
                 if t == TYPES.IDENTIFICATION:
-                    print("Recieved Indetification Packet")
                     i = msg[1]
+                    print("Recieved Indetification Packet: ", i)
                     self.update_socket(i, clientsocket)
                 # Vision, Dashboard, or joystick data gets sent to hero
                 elif t == TYPES.VISION or t == TYPES.DASHBOARD or t == TYPES.JOYSTICK:
