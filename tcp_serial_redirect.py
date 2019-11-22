@@ -202,10 +202,14 @@ it waits for the next connect.
                 # enter network <-> serial loop
                 while True:
                     try:
-                        data = client_socket.recv(1024)
+                        data = client_socket.recv(128)
                         if not data:
                             break
-                        ser.write(data)                 # get a bunch of bytes and send them
+                        header = bytearray(3)
+                        header[0] = 44
+                        header[1] = 254
+                        header[2] = 153
+                        ser.write(header + data)                 # get a bunch of bytes and send them
                     except socket.error as msg:
                         if args.develop:
                             raise
