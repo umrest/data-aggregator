@@ -13,6 +13,8 @@ class SimpleRouter():
         self.hero_socket = None
         self.vision_socket = None
 
+        self.vision_dashboard_timeout = 0
+
         self.dashboard_socket_lock = threading.Lock()
         self.vision_socket_lock = threading.Lock()
         self.hero_socket_lock = threading.Lock()
@@ -39,7 +41,8 @@ class SimpleRouter():
             self.hero_socket.send(msg)
             self.hero_socket_lock.release()
         else:
-            print("Hero is not connected")
+            #print("Hero is not connected")
+            pass
     
     def send_to_dashboard(self, msg):
         #print("Recieved Data for Dashboard")
@@ -48,7 +51,8 @@ class SimpleRouter():
             self.dashboard_socket.send(msg)
             self.dashboard_socket_lock.release()
         else:
-            print("Dashboard is not connected")
+            #print("Dashboard is not connected")
+            pass
 
     def on_new_client(self, clientsocket,addr):
         i = -1
@@ -67,11 +71,13 @@ class SimpleRouter():
                     self.update_socket(i, clientsocket)
                 # Vision, Dashboard, or joystick data gets sent to hero
                 elif t == TYPES.VISION or t == TYPES.DASHBOARD or t == TYPES.JOYSTICK:
-                    print("Recieved Type ", t)
+                    #print("Recieved Type ", t)
                     self.send_to_hero(msg)
                     if t == TYPES.VISION:
-                        
-                        self.send_to_dashboard(msg)
+                        self.vision_dashboard_timeout += 1
+                        if self.vision_dashboard_timeout >= 10:
+                            self.vision_dashboard_timeout = 0
+                            self.send_to_dashboard(msg)
                 else:
                     print("Invalid type: ", t)
         finally:
