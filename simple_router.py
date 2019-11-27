@@ -78,6 +78,8 @@ class SimpleRouter():
                         if self.vision_dashboard_timeout >= 10:
                             self.vision_dashboard_timeout = 0
                             self.send_to_dashboard(msg)
+                if t == TYPES.DASHBOARD_OUT:
+                    self.send_to_dashboard(msg)
                 else:
                     print("Invalid type: ", t)
         finally:

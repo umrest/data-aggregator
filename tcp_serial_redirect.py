@@ -23,7 +23,13 @@ class SerialToNet(serial.threaded.Protocol):
 
     def data_received(self, data):
         if self.socket is not None:
-            self.socket.sendall(data)
+            """
+            if data[0] == 44 and data[1] == 254 and data[2] == 153:
+                print("Recieved valid header")
+                self.socket.sendall(data[3:128+3])
+            else:
+                print("Recieved invalid header")
+                """
 
 
 if __name__ == '__main__':  # noqa
