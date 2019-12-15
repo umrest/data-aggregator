@@ -18,6 +18,7 @@ class SimpleRouter():
         self.dashboard_socket_lock = threading.Lock()
         self.vision_socket_lock = threading.Lock()
         self.hero_socket_lock = threading.Lock()
+        self.vision_socket_lock = threading.Lock()
 
         self.s = socket.socket()         # Create a socket object
         
@@ -53,6 +54,16 @@ class SimpleRouter():
         else:
             #print("Dashboard is not connected")
             pass
+    
+    def send_to_vision(self, msg):
+        #print("Recieved Data for Dashboard")
+        if self.vision_socket != None:
+            self.vision_socket_lock.acquire()
+            self.vision_socket.send(msg)
+            self.vision_socket_lock.release()
+        else:
+            #print("Dashboard is not connected")
+            pass
 
     def on_new_client(self, clientsocket,addr):
         i = -1
@@ -60,10 +71,18 @@ class SimpleRouter():
             while True:
                 #while(clientsocket.recv(1, socket.MSG_WAITALL) != 255):
                 #    print("Header invalid...")
-                msg = clientsocket.recv(128, socket.MSG_WAITALL)
-                if not msg:
+                t = clientsocket.recv(1, socket.MSG_WAITALL)
+                size = 127
+                if not t:
                     break
-                t = msg[0]
+                
+
+                if t[0] == TYPES.VISION_IMG:
+                    size = 65536-1
+
+                msg = t + clientsocket.recv(size, socket.MSG_WAITALL)
+                
+                t = t[0]
                 # socket identification packet
                 if t == TYPES.IDENTIFICATION:
                     i = msg[1]
@@ -78,6 +97,10 @@ class SimpleRouter():
                         if self.vision_dashboard_timeout >= 10:
                             self.vision_dashboard_timeout = 0
                             self.send_to_dashboard(msg)
+                elif t == TYPES.VISION_CMD:
+                    self.send_to_vision(msg)
+                elif t == TYPES.VISION_IMG:
+                    self.send_to_dashboard(msg)
                 elif t == TYPES.DASHBOARD_OUT:
                     self.send_to_dashboard(msg)
                 else:
