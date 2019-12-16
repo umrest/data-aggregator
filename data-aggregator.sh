@@ -1,3 +1,5 @@
+#!/bin/bash
+
 DIR=/home/pi/rest/data-aggregator
 VENV=/home/pi/rest/venv
 
@@ -6,4 +8,5 @@ source $VENV/bin/activate
 while true; do
     python simple_router.py
     echo "Data Aggregator Crashed..."
+    sleep 2
 done
