@@ -17,6 +17,7 @@ class Ser2TCP():
             try:
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.socket.settimeout(10)
+                
                 self.socket.connect(("127.0.0.1", 8091))
                 self.socket_connected = True
                 identifier = bytearray(128)

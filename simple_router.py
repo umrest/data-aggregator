@@ -23,6 +23,7 @@ class SimpleRouter():
         self.s = socket.socket()         # Create a socket object
         
         self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)    
+        self.s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         self.s.bind(("0.0.0.0", 8091))        # Bind to the port
         
         self.s.listen(5)                 # Now wait for client connection.
@@ -94,7 +95,7 @@ class SimpleRouter():
                     self.send_to_hero(msg)
                     if t == TYPES.VISION:
                         self.vision_dashboard_timeout += 1
-                        if self.vision_dashboard_timeout >= 10:
+                        if self.vision_dashboard_timeout >= 1:
                             self.vision_dashboard_timeout = 0
                             self.send_to_dashboard(msg)
                 elif t == TYPES.VISION_CMD:
